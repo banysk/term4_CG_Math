@@ -1,7 +1,9 @@
-#include "pch.h"
+//#include "pch.h"
 #include "CppUnitTest.h"
-#include "lib/Math.hpp"
 #include "glm/glm.hpp"
+#include "lib/Math.cpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/transform.hpp"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CG_MATH
@@ -63,252 +65,294 @@ namespace CG_MATH
 
     // Main
     TEST_CLASS(Mat) {
-    public:
-        TEST_METHOD(Constructor) {
-            cm::Mat mat;
-            cm::Mat mat1({ {1.0f} }), mat2({ {1.0f, 2.0f}, {3.0f, 4.0f} });
-            Assert::AreEqual(mat1[0][0], 1.0f);
-            Assert::AreEqual(mat2[0][0], 1.0f);
-            Assert::AreEqual(mat2[0][1], 2.0f);
-            Assert::AreEqual(mat2[1][0], 3.0f);
-            Assert::AreEqual(mat2[1][1], 4.0f);
-        }
+public:
+    TEST_METHOD(Constructor) {
+        cm::Mat mat;
+        cm::Mat mat1({ {1.0f} }), mat2({ {1.0f, 2.0f}, {3.0f, 4.0f} });
+        Assert::AreEqual(mat1[0][0], 1.0f);
+        Assert::AreEqual(mat2[0][0], 1.0f);
+        Assert::AreEqual(mat2[0][1], 2.0f);
+        Assert::AreEqual(mat2[1][0], 3.0f);
+        Assert::AreEqual(mat2[1][1], 4.0f);
+    }
 
-        TEST_METHOD(Addition) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
-                glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
-                cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
+    TEST_METHOD(Addition) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
+            glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
+            cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
 
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
-                glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
-                cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
+            glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
+            cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
 
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
-                glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
-                cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
-
-
-            Assert::IsTrue(CheckOperation(glm2_1 + glm2_2, cm2_1 + cm2_2));
-            Assert::IsTrue(CheckOperation(glm3_1 + glm3_2, cm3_1 + cm3_2));
-            Assert::IsTrue(CheckOperation(glm4_1 + glm4_2, cm4_1 + cm4_2));
-        }
-
-        TEST_METHOD(Subtraction) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
-                glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
-                cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
-
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
-                glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
-                cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
-
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
-                glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
-                cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
+            glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
+            cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
 
 
-            Assert::IsTrue(CheckOperation(glm2_1 - glm2_2, cm2_1 - cm2_2));
-            Assert::IsTrue(CheckOperation(glm3_1 - glm3_2, cm3_1 - cm3_2));
-            Assert::IsTrue(CheckOperation(glm4_1 - glm4_2, cm4_1 - cm4_2));
-        }
+        Assert::IsTrue(CheckOperation(glm2_1 + glm2_2, cm2_1 + cm2_2));
+        Assert::IsTrue(CheckOperation(glm3_1 + glm3_2, cm3_1 + cm3_2));
+        Assert::IsTrue(CheckOperation(glm4_1 + glm4_2, cm4_1 + cm4_2));
+    }
 
-        TEST_METHOD(Multiplication) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
-                glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
-                cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
+    TEST_METHOD(Subtraction) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
+            glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
+            cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
 
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
-                glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
-                cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
+            glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
+            cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
 
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
-                glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
-                cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
-
-
-            Assert::IsTrue(CheckOperation(glm2_1 * glm2_2, cm2_1 * cm2_2));
-            Assert::IsTrue(CheckOperation(glm3_1 * glm3_2, cm3_1 * cm3_2));
-            Assert::IsTrue(CheckOperation(glm4_1 * glm4_2, cm4_1 * cm4_2));
-        }
-
-        TEST_METHOD(MultiplicationByNum) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
-
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
-
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
+            glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
+            cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
 
 
-            Assert::IsTrue(CheckOperation(glm2_1 * 2.0f, cm2_1 * 2.0f));
-            Assert::IsTrue(CheckOperation(glm3_1 * 3.0f, cm3_1 * 3.0f));
-            Assert::IsTrue(CheckOperation(glm4_1 * 4.0f, cm4_1 * 4.0f));
-        }
+        Assert::IsTrue(CheckOperation(glm2_1 - glm2_2, cm2_1 - cm2_2));
+        Assert::IsTrue(CheckOperation(glm3_1 - glm3_2, cm3_1 - cm3_2));
+        Assert::IsTrue(CheckOperation(glm4_1 - glm4_2, cm4_1 - cm4_2));
+    }
 
-        TEST_METHOD(DivisionByNum) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+    TEST_METHOD(Multiplication) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
+            glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
+            cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
 
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
+            glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
+            cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
 
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
-
-
-            Assert::IsTrue(CheckOperation(glm2_1 / 2.0f, cm2_1 / 2.0f));
-            Assert::IsTrue(CheckOperation(glm3_1 / 3.0f, cm3_1 / 3.0f));
-            Assert::IsTrue(CheckOperation(glm4_1 / 4.0f, cm4_1 / 4.0f));
-        }
-
-        TEST_METHOD(AddNum) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
-
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
-
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
+            glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
+            cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
 
 
-            Assert::IsTrue(CheckOperation(glm2_1 + 2.0f, cm2_1 + 2.0f));
-            Assert::IsTrue(CheckOperation(glm3_1 + 3.0f, cm3_1 + 3.0f));
-            Assert::IsTrue(CheckOperation(glm4_1 + 4.0f, cm4_1 + 4.0f));
-        }
+        Assert::IsTrue(CheckOperation(glm2_1 * glm2_2, cm2_1 * cm2_2));
+        Assert::IsTrue(CheckOperation(glm3_1 * glm3_2, cm3_1 * cm3_2));
+        Assert::IsTrue(CheckOperation(glm4_1 * glm4_2, cm4_1 * cm4_2));
+    }
 
-        TEST_METHOD(SubtractNum) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+    TEST_METHOD(MultiplicationByNum) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
 
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
 
 
-            Assert::IsTrue(CheckOperation(glm2_1 - 2.0f, cm2_1 - 2.0f));
-            Assert::IsTrue(CheckOperation(glm3_1 - 3.0f, cm3_1 - 3.0f));
-            Assert::IsTrue(CheckOperation(glm4_1 - 4.0f, cm4_1 - 4.0f));
-        }
+        Assert::IsTrue(CheckOperation(glm2_1 * 2.0f, cm2_1 * 2.0f));
+        Assert::IsTrue(CheckOperation(glm3_1 * 3.0f, cm3_1 * 3.0f));
+        Assert::IsTrue(CheckOperation(glm4_1 * 4.0f, cm4_1 * 4.0f));
+    }
 
-        TEST_METHOD(MultiplicationByVec) { // TESTED
-            glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+    TEST_METHOD(DivisionByNum) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
 
-            glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-            glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
 
-            glm::vec2 glm2v(0.0f, 1.0f);
-            glm::vec3 glm3v(0.0f, 1.0f, 2.0f);
-            glm::vec4 glm4v(0.0f, 1.0f, 2.0f, 3.0f);
 
-            cm::Vec cm2v(0.0f, 1.0f);
-            cm::Vec cm3v(0.0f, 1.0f, 2.0f);
-            cm::Vec cm4v(0.0f, 1.0f, 2.0f, 3.0f);
+        Assert::IsTrue(CheckOperation(glm2_1 / 2.0f, cm2_1 / 2.0f));
+        Assert::IsTrue(CheckOperation(glm3_1 / 3.0f, cm3_1 / 3.0f));
+        Assert::IsTrue(CheckOperation(glm4_1 / 4.0f, cm4_1 / 4.0f));
+    }
 
-            Assert::IsTrue(CheckOperation(glm2m * glm2v, cm2m * cm2v));
-            Assert::IsTrue(CheckOperation(glm3m * glm3v, cm3m * cm3v));
-            Assert::IsTrue(CheckOperation(glm4m * glm4v, cm4m * cm4v));
-        }
+    TEST_METHOD(AddNum) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
 
-        TEST_METHOD(IdentityMatrix) { // TESTED
-            Assert::IsTrue(CheckOperation(glm::mat2(1.0f), cm::identity(2)));
-            Assert::IsTrue(CheckOperation(glm::mat3(1.0f), cm::identity(3)));
-            Assert::IsTrue(CheckOperation(glm::mat4(1.0f), cm::identity(4)));
-        }
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-        TEST_METHOD(Det) { // TESTED
-            glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
 
-            glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-            glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+        Assert::IsTrue(CheckOperation(glm2_1 + 2.0f, cm2_1 + 2.0f));
+        Assert::IsTrue(CheckOperation(glm3_1 + 3.0f, cm3_1 + 3.0f));
+        Assert::IsTrue(CheckOperation(glm4_1 + 4.0f, cm4_1 + 4.0f));
+    }
 
-            Assert::AreEqual(glm::determinant(glm2m), cm::det(cm2m));
-            Assert::AreEqual(glm::determinant(glm3m), cm::det(cm3m));
-            Assert::AreEqual(glm::determinant(glm4m), cm::det(cm4m));
-        }
+    TEST_METHOD(SubtractNum) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
 
-        TEST_METHOD(Inverse) { // TESTED
-            glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-            glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
 
-            glm::mat4 glm4m(0.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 17.0f);
-            cm::Mat cm4m({ {0.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 17.0f} });
 
-            Assert::IsTrue(CheckOperation(glm::inverse(glm2m), cm::inverse(cm2m)));
-            Assert::IsTrue(CheckOperation(glm::inverse(glm3m), cm::inverse(cm3m)));
-            Assert::IsTrue(CheckOperation(glm::inverse(glm4m), cm::inverse(cm4m)));
-        }
+        Assert::IsTrue(CheckOperation(glm2_1 - 2.0f, cm2_1 - 2.0f));
+        Assert::IsTrue(CheckOperation(glm3_1 - 3.0f, cm3_1 - 3.0f));
+        Assert::IsTrue(CheckOperation(glm4_1 - 4.0f, cm4_1 - 4.0f));
+    }
 
-        TEST_METHOD(TransposedMatrix) { // TESTED
-            glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
-            cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+    TEST_METHOD(MultiplicationByVec) { // TESTED
+        glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
 
-            glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
-            cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+        glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-            glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
-            cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+        glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
 
-            Assert::IsTrue(CheckOperation(glm::transpose(glm2m), cm::transpose(cm2m)));
-            Assert::IsTrue(CheckOperation(glm::transpose(glm3m), cm::transpose(cm3m)));
-            Assert::IsTrue(CheckOperation(glm::transpose(glm4m), cm::transpose(cm4m)));
-        }
+        glm::vec2 glm2v(0.0f, 1.0f);
+        glm::vec3 glm3v(0.0f, 1.0f, 2.0f);
+        glm::vec4 glm4v(0.0f, 1.0f, 2.0f, 3.0f);
 
-        TEST_METHOD(Comparisons) { // TESTED
-            glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
-                glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
-            cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
-                cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
+        cm::Vec cm2v(0.0f, 1.0f);
+        cm::Vec cm3v(0.0f, 1.0f, 2.0f);
+        cm::Vec cm4v(0.0f, 1.0f, 2.0f, 3.0f);
 
-            glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
-                glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
-                cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
+        Assert::IsTrue(CheckOperation(glm2m * glm2v, cm2m * cm2v));
+        Assert::IsTrue(CheckOperation(glm3m * glm3v, cm3m * cm3v));
+        Assert::IsTrue(CheckOperation(glm4m * glm4v, cm4m * cm4v));
+    }
 
-            glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
-                glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
-            cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
-                cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
+    TEST_METHOD(IdentityMatrix) { // TESTED
+        Assert::IsTrue(CheckOperation(glm::mat2(1.0f), cm::identity(2)));
+        Assert::IsTrue(CheckOperation(glm::mat3(1.0f), cm::identity(3)));
+        Assert::IsTrue(CheckOperation(glm::mat4(1.0f), cm::identity(4)));
+    }
 
-            Assert::AreEqual(glm2_1 != glm2_2, cm2_1 != cm2_2);
-            Assert::AreEqual(glm3_1 != glm3_2, cm3_1 != cm3_2);
-            Assert::AreEqual(glm4_1 != glm4_2, cm4_1 != cm4_2);
+    TEST_METHOD(Det) { // TESTED
+        glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
 
-            Assert::AreEqual(!(glm2_1 != glm2_2), !(cm2_1 != cm2_2));
-            Assert::AreEqual(!(glm3_1 != glm3_2), !(cm3_1 != cm3_2));
-            Assert::AreEqual(!(glm4_1 != glm4_2), !(cm4_1 != cm4_2));
-        }
+        glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
 
-        TEST_METHOD(Sub) { // TESTED
-            
-        }
+        glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
 
+        Assert::AreEqual(glm::determinant(glm2m), cm::det(cm2m));
+        Assert::AreEqual(glm::determinant(glm3m), cm::det(cm3m));
+        Assert::AreEqual(glm::determinant(glm4m), cm::det(cm4m));
+    }
+
+    TEST_METHOD(Inverse) { // TESTED
+        glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+
+        glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+
+        glm::mat4 glm4m(0.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 17.0f);
+        cm::Mat cm4m({ {0.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 17.0f} });
+
+        Assert::IsTrue(CheckOperation(glm::inverse(glm2m), cm::inverse(cm2m)));
+        Assert::IsTrue(CheckOperation(glm::inverse(glm3m), cm::inverse(cm3m)));
+        Assert::IsTrue(CheckOperation(glm::inverse(glm4m), cm::inverse(cm4m)));
+    }
+
+    TEST_METHOD(TransposedMatrix) { // TESTED
+        glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
+        cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+
+        glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+        cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+
+        glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+        cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+
+        Assert::IsTrue(CheckOperation(glm::transpose(glm2m), cm::transpose(cm2m)));
+        Assert::IsTrue(CheckOperation(glm::transpose(glm3m), cm::transpose(cm3m)));
+        Assert::IsTrue(CheckOperation(glm::transpose(glm4m), cm::transpose(cm4m)));
+    }
+
+    TEST_METHOD(Comparisons) { // TESTED
+        glm::mat2 glm2_1(1.0f, 3.0f, 2.0f, 4.0f),
+            glm2_2(-1.0f, 1.0f, -1.0f, 1.0f);
+        cm::Mat cm2_1({ { 1.0f, 3.0f }, { 2.0f, 4.0f } }),
+            cm2_2({ {-1.0f, 1.0f}, {-1.0f, 1.0f} });
+
+        glm::mat3 glm3_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f),
+            glm3_2(9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm3_1({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} }),
+            cm3_2({ {9.0f, 8.0f, 7.0f}, {6.0f, 5.0f, 4.0f}, {3.0f, 2.0f, 1.0f} });
+
+        glm::mat4 glm4_1(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f),
+            glm4_2(16.0f, 15.0f, 14.0f, 13.0f, 12.0f, 11.0f, 10.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f);
+        cm::Mat cm4_1({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} }),
+            cm4_2({ {16.0f, 15.0f, 14.0f, 13.0f},{12.0f, 11.0f, 10.0f, 9.0f},{8.0f, 7.0f, 6.0f, 5.0f},{4.0f, 3.0f, 2.0f, 1.0f} });
+
+        Assert::AreEqual(glm2_1 != glm2_2, cm2_1 != cm2_2);
+        Assert::AreEqual(glm3_1 != glm3_2, cm3_1 != cm3_2);
+        Assert::AreEqual(glm4_1 != glm4_2, cm4_1 != cm4_2);
+
+        Assert::AreEqual(!(glm2_1 != glm2_2), !(cm2_1 != cm2_2));
+        Assert::AreEqual(!(glm3_1 != glm3_2), !(cm3_1 != cm3_2));
+        Assert::AreEqual(!(glm4_1 != glm4_2), !(cm4_1 != cm4_2));
+    }
+
+    TEST_METHOD(Translate) { // TESTED
+        glm::mat4 glm4m(1.0f);
+        cm::Mat cm4m = cm::identity(4);
+
+        glm::vec4 glm4v(0.0f, 1.0f, 2.0f, 1.0f);
+        cm::Vec cm4v(0.0f, 1.0f, 2.0f, 1.0f);
+
+        auto glm = glm::translate(glm4m, glm::vec3(10.0f, 10.0f, 10.0f));
+        auto cm = cm::translate(cm4m, cm::Vec(10.0f, 10.0f, 10.0f));
+
+        Assert::IsTrue(CheckOperation(glm * glm4v, cm * cm4v));
+
+        glm = glm::translate(glm4m, glm::vec3(-10.0f, 10.0f, -10.0f));
+        cm = cm::translate(cm4m, cm::Vec(-10.0f, 10.0f, -10.0f));
+
+        Assert::IsTrue(CheckOperation(glm * glm4v, cm * cm4v));
+    }
+
+    TEST_METHOD(Scale) { // TESTED
+        glm::mat4 glm = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+        cm::Mat m = cm::identity(4);
+        cm::Vec v = cm::Vec(1.0f, 2.0f, 3.0f);
+        cm::Mat cm = cm::scale(m, v);
+        Assert::IsTrue(CheckOperation(glm, cm));
+    }
+
+    TEST_METHOD(RotateX) {
+        cm::Mat rX = cm::rotateX(90.0);
+        cm::Vec vec(1.0f, 0.0f, 0.0f, 0.0f);
+        cm::Vec res = rX * vec;
+        Assert::IsTrue(1);
+    }
+
+    TEST_METHOD(RotateY) {
+        cm::Mat rY = cm::rotateY(90.0);
+        cm::Vec vec(1.0f, 0.0f, 0.0f, 0.0f);
+        cm::Vec res = rY * vec;
+        Assert::IsTrue(1);
+    }
+
+    TEST_METHOD(RotateZ) {
+        cm::Mat rZ = cm::rotateZ(90.0);
+        cm::Vec vec(1.0f, 0.0f, 0.0f, 0.0f);
+        cm::Vec res = rZ * vec;
+        Assert::IsTrue(1);
+    }
     };
-    
+
     TEST_CLASS(Vec)
     {
     public:
