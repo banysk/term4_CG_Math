@@ -233,8 +233,34 @@ namespace CG_MATH
             Assert::IsTrue(CheckOperation(glm::mat4(1.0f), cm::identity(4)));
         }
 
-        TEST_METHOD(InverseMatrix) {
-            Assert::AreEqual(1, 0);
+        TEST_METHOD(Det) { // TESTED
+            glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
+            cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+
+            glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+            cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+
+            glm::mat4 glm4m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f);
+            cm::Mat cm4m({ {1.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 16.0f} });
+
+            Assert::AreEqual(glm::determinant(glm2m), cm::det(cm2m));
+            Assert::AreEqual(glm::determinant(glm3m), cm::det(cm3m));
+            Assert::AreEqual(glm::determinant(glm4m), cm::det(cm4m));
+        }
+
+        TEST_METHOD(Inverse) { // TESTED
+            glm::mat2 glm2m(1.0f, 3.0f, 2.0f, 4.0f);
+            cm::Mat cm2m({ { 1.0f, 3.0f }, { 2.0f, 4.0f } });
+
+            glm::mat3 glm3m(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f);
+            cm::Mat cm3m({ { 1.0f, 2.0f, 3.0f }, { 4.0f, 5.0f, 6.0f }, {7.0f, 8.0f, 9.0f} });
+
+            glm::mat4 glm4m(0.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 17.0f);
+            cm::Mat cm4m({ {0.0f, 2.0f, 3.0f, 4.0f},{5.0f, 6.0f, 7.0f, 8.0f},{9.0f, 10.0f, 11.0f, 12.0f},{13.0f, 14.0f, 15.0f, 17.0f} });
+
+            Assert::IsTrue(CheckOperation(glm::inverse(glm2m), cm::inverse(cm2m)));
+            Assert::IsTrue(CheckOperation(glm::inverse(glm3m), cm::inverse(cm3m)));
+            Assert::IsTrue(CheckOperation(glm::inverse(glm4m), cm::inverse(cm4m)));
         }
 
         TEST_METHOD(TransposedMatrix) { // TESTED
@@ -275,6 +301,10 @@ namespace CG_MATH
             Assert::AreEqual(!(glm2_1 != glm2_2), !(cm2_1 != cm2_2));
             Assert::AreEqual(!(glm3_1 != glm3_2), !(cm3_1 != cm3_2));
             Assert::AreEqual(!(glm4_1 != glm4_2), !(cm4_1 != cm4_2));
+        }
+
+        TEST_METHOD(Sub) { // TESTED
+            
         }
 
     };

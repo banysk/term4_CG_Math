@@ -22,7 +22,7 @@
 ** 8. - num __DONE
 ** 9. * VEC __DONE
 ** 10. E __DONE
-** 11. -1 __
+** 11. -1 __DONE
 ** 12. T __DONE
 ** 13. comparisons __DONE
 ** 14. offset __
@@ -310,10 +310,6 @@ namespace cm {
         return result;
     }
 
-    Mat inverse(Mat& mat) { // FIX ME!!!
-        return Mat();
-    }
-
     Mat transpose(Mat& mat) {
         int dim = mat.dim();
         Mat result(dim);
@@ -323,6 +319,59 @@ namespace cm {
             }
         }
         return result;
+    }
+
+    int sign(int i) {
+        int sgn;
+        i % 2 == 0 ? sgn = 1 : sgn = -1;
+        return sgn;
+    }
+
+    Mat sub(Mat& mat, int ex_row, int ex_col) {
+        int dim = mat.dim();
+        Mat result(dim - 1);
+        int r = 0;
+        for (int row = 0; row < dim; row++) {
+            if (row == ex_row)
+                continue;
+            int c = 0;
+            for (int col = 0; col < dim; col++) {
+                if (col == ex_col)
+                    continue;
+                result[r][c] = mat[row][col];
+                c++;
+            }
+            r++;
+        }
+        return result;
+    }
+
+    float det(Mat& mat) {
+        if (mat.dim() == 1)
+            return mat[0][0];
+        if (mat.dim() == 2)
+            return mat[0][0] * mat[1][1] - mat[1][0] * mat[0][1];
+        int dim = mat.dim();
+        float result = 0;
+        for (int i = 0; i < dim; i++) {
+            result += sign(i) * mat[0][i] * det(sub(mat, 0, i));
+        }
+        return result;
+    }
+
+    Mat ac(Mat& mat) {
+        int dim = mat.dim();
+        Mat result(dim);
+        for (int row = 0; row < dim; row++) {
+            for (int col = 0; col < dim; col++) {
+                result[row][col] = sign(row) * sign(col) * det(sub(mat, row, col));
+            }
+        }
+        return result;
+    }
+
+    Mat inverse(Mat& mat) {
+        return transpose(ac(mat) * float(1.0f / det(mat)));
     }
 }
 
